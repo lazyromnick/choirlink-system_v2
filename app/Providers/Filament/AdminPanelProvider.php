@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('ChoirLink System')
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Green,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

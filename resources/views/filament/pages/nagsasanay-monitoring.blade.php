@@ -18,21 +18,10 @@
         />
         <x-filament::button
             wire:click="goToCurrentMonth"
-            color="primary"
+            color="gray"
             size="sm"
         >
             Current Month
-        </x-filament::button>
-
-        <x-filament::button
-            wire:click="recordAttendance"
-            wire:loading.attr="disabled"
-            wire:target="recordAttendance"
-            color="success"
-            icon="heroicon-o-check-circle"
-        >
-            <span wire:loading.remove wire:target="recordAttendance">Record Attendance</span>
-            <span wire:loading wire:target="recordAttendance">Saving...</span>
         </x-filament::button>
     </div>
 
@@ -153,6 +142,20 @@
             </table>
         </div>
     </x-filament::section>
+
+    <div class="flex justify-end mt-4 mb-6">
+        <x-filament::button
+            wire:click="recordAttendance"
+            wire:loading.attr="disabled"
+            wire:target="recordAttendance"
+            color="success"
+            icon="heroicon-o-check-circle"
+            size="lg"
+        >
+            <span wire:loading.remove wire:target="recordAttendance">Record Attendance</span>
+            <span wire:loading wire:target="recordAttendance">Saving...</span>
+        </x-filament::button>
+    </div>
 
     {{-- Summary Section --}}
     <x-filament::section class="mt-6">

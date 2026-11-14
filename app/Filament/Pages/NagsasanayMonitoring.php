@@ -15,7 +15,7 @@ use Livewire\Attributes\Computed;
 class NagsasanayMonitoring extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected static ?string $navigationLabel = 'Monitoring';
+    protected static ?string $navigationLabel = 'Nagsasanay Monitoring';
     protected static ?string $title = 'Nagsasanay Monitoring';
     protected static ?int $navigationSort = 3;
     protected static string $view = 'filament.pages.nagsasanay-monitoring';
@@ -181,5 +181,14 @@ class NagsasanayMonitoring extends Page
     public function getFormSchema(): array
     {
         return [];
+    }
+
+    public function render(): \Illuminate\View\View
+    {
+        return view('filament.pages.nagsasanay-monitoring', [
+            'sessions'      => $this->sessions,
+            'mangAawitList' => $this->mangAawitList,
+            'organistaList' => $this->organistaList,
+        ]);
     }
 }

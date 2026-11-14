@@ -10,7 +10,6 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
 
 class NagsasanayMonitoring extends Page
 {
@@ -23,8 +22,6 @@ class NagsasanayMonitoring extends Page
     public int $month;
     public int $year;
     public ?string $newSessionDate = null;
-
-    // Attendance cache
     public array $attendanceMap = [];
 
     public function mount(): void
@@ -34,31 +31,7 @@ class NagsasanayMonitoring extends Page
         $this->loadAttendance();
     }
 
-    public function previousMonth(): void
-    {
-        $date = \Carbon\Carbon::create($this->year, $this->month)->subMonth();
-        $this->month = $date->month;
-        $this->year  = $date->year;
-        $this->loadAttendance();
-    }
-
-    public function nextMonth(): void
-    {
-        $date = \Carbon\Carbon::create($this->year, $this->month)->addMonth();
-        $this->month = $date->month;
-        $this->year  = $date->year;
-        $this->loadAttendance();
-    }
-
-    public function goToCurrentMonth(): void
-    {
-        $this->month = now()->month;
-        $this->year  = now()->year;
-        $this->loadAttendance();
-    }
-
-    #[Computed]
-    public function sessions()
+    public function getSessions()
     {
         return NagsasanayMonitoringSession::where('month', $this->month)
             ->where('year', $this->year)
@@ -66,8 +39,7 @@ class NagsasanayMonitoring extends Page
             ->get();
     }
 
-    #[Computed]
-    public function mangAawitList()
+    public function getMangAawitList()
     {
         return Nagsasanay::whereNull('deleted_at')
             ->where('training_track', 'Mang-aawit')
@@ -76,8 +48,7 @@ class NagsasanayMonitoring extends Page
             ->get();
     }
 
-    #[Computed]
-    public function organistaList()
+    public function getOrganistaList()
     {
         return Nagsasanay::whereNull('deleted_at')
             ->where('training_track', 'Organista')
@@ -122,19 +93,32 @@ class NagsasanayMonitoring extends Page
         $this->attendanceMap[$nagsasanayId][$sessionId] = !$current;
     }
 
+    public function previousMonth(): void
+    {
+        $date = \Carbon\Carbon::create($this->year, $this->month)->subMonth();
+        $this->month = $date->month;
+        $this->year  = $date->year;
+        $this->loadAttendance();
+    }
+
+    public function nextMonth(): void
+    {
+        $date = \Carbon\Carbon::create($this->year, $this->month)->addMonth();
+        $this->month = $date->month;
+        $this->year  = $date->year;
+        $this->loadAttendance();
+    }
+
+    public function goToCurrentMonth(): void
+    {
+        $this->month = now()->month;
+        $this->year  = now()->year;
+        $this->loadAttendance();
+    }
+
     public function addSession(): void
     {
         $this->dispatch('open-modal', id: 'add-session-modal');
-    }
-
-    public function addSessionForm(Form $form): Form
-    {
-        return $form->schema([
-            Forms\Components\DatePicker::make('newSessionDate')
-                ->label('Session Date')
-                ->required()
-                ->default(now()),
-        ]);
     }
 
     public function saveSession(): void
@@ -146,8 +130,7 @@ class NagsasanayMonitoring extends Page
 
         $date = \Carbon\Carbon::parse($this->newSessionDate);
 
-        $exists = NagsasanayMonitoringSession::where('session_date', $date->toDateString())
-            ->exists();
+        $exists = NagsasanayMonitoringSession::where('session_date', $date->toDateString())->exists();
 
         if ($exists) {
             Notification::make()->title('This date already exists.')->warning()->send();
@@ -166,15 +149,12 @@ class NagsasanayMonitoring extends Page
         $this->loadAttendance();
 
         Notification::make()->title('Session date added.')->success()->send();
-        unset($this->sessions);
     }
 
     public function removeSession(int $sessionId): void
     {
         NagsasanayMonitoringSession::findOrFail($sessionId)->delete();
         $this->loadAttendance();
-        unset($this->sessions);
-
         Notification::make()->title('Session date removed.')->success()->send();
     }
 
@@ -186,9 +166,9 @@ class NagsasanayMonitoring extends Page
     public function render(): \Illuminate\View\View
     {
         return view('filament.pages.nagsasanay-monitoring', [
-            'sessions'      => $this->sessions,
-            'mangAawitList' => $this->mangAawitList,
-            'organistaList' => $this->organistaList,
+            'sessions'      => $this->getSessions(),
+            'mangAawitList' => $this->getMangAawitList(),
+            'organistaList' => $this->getOrganistaList(),
         ]);
     }
 }

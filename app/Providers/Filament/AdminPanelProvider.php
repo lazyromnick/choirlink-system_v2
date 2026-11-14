@@ -26,7 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('Lokal ng Lopez — Mang-aawit')
+            ->brandName('ChoirLink System')
             ->colors([
                 'primary' => Color::Blue,
             ])

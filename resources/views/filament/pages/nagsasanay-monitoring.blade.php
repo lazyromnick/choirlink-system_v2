@@ -23,6 +23,17 @@
         >
             Current Month
         </x-filament::button>
+
+        <x-filament::button
+            wire:click="recordAttendance"
+            wire:loading.attr="disabled"
+            wire:target="recordAttendance"
+            color="success"
+            icon="heroicon-o-check-circle"
+        >
+            <span wire:loading.remove wire:target="recordAttendance">Record Attendance</span>
+            <span wire:loading wire:target="recordAttendance">Saving...</span>
+        </x-filament::button>
     </div>
 
     {{-- Add Date Form --}}
@@ -75,8 +86,7 @@
                                 <td class="text-center py-2 px-2">
                                     <input
                                         type="checkbox"
-                                        wire:click="toggleAttendance({{ $nagsasanay->id }}, {{ $session->id }})"
-                                        @checked($this->isPresent($nagsasanay->id, $session->id))
+                                        wire:model="pending.{{ $nagsasanay->id }}.{{ $session->id }}"
                                         class="rounded border-gray-300 text-primary-600 cursor-pointer w-4 h-4"
                                     />
                                 </td>
@@ -123,8 +133,7 @@
                                 <td class="text-center py-2 px-2">
                                     <input
                                         type="checkbox"
-                                        wire:click="toggleAttendance({{ $nagsasanay->id }}, {{ $session->id }})"
-                                        @checked($this->isPresent($nagsasanay->id, $session->id))
+                                        wire:model="pending.{{ $nagsasanay->id }}.{{ $session->id }}"
                                         class="rounded border-gray-300 text-primary-600 cursor-pointer w-4 h-4"
                                     />
                                 </td>

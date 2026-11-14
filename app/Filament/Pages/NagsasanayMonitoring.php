@@ -2,15 +2,13 @@
 
 namespace App\Filament\Pages;
 
-
-
-
 use App\Models\Nagsasanay;
 use App\Models\NagsasanayMonitoringAttendance;
 use App\Models\NagsasanayMonitoringSession;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class NagsasanayMonitoring extends Page
 {
@@ -25,7 +23,12 @@ class NagsasanayMonitoring extends Page
     public int $month;
     public int $year;
     public ?string $newSessionDate = null;
+
+    // Saved attendance (from database)
     public array $attendanceMap = [];
+
+    // On-screen checkbox state, not saved until Record is clicked
+    public array $pending = [];
 
     public function mount(): void
     {
@@ -69,8 +72,11 @@ class NagsasanayMonitoring extends Page
 
         $this->attendanceMap = [];
         foreach ($records as $record) {
-            $this->attendanceMap[$record->nagsasanay_id][$record->session_id] = $record->is_present;
+            $this->attendanceMap[$record->nagsasanay_id][$record->session_id] = (bool) $record->is_present;
         }
+
+        // Reset on-screen checkboxes to match what is saved
+        $this->pending = $this->attendanceMap;
     }
 
     public function isPresent(int $nagsasanayId, int $sessionId): bool
@@ -78,22 +84,42 @@ class NagsasanayMonitoring extends Page
         return $this->attendanceMap[$nagsasanayId][$sessionId] ?? false;
     }
 
+    // Total based on SAVED attendance (updates after Record is clicked)
     public function getTotal(int $nagsasanayId): int
     {
         $totals = $this->attendanceMap[$nagsasanayId] ?? [];
         return count(array_filter($totals, fn ($v) => $v === true));
     }
 
-    public function toggleAttendance(int $nagsasanayId, int $sessionId): void
+    public function recordAttendance(): void
     {
-        $current = $this->attendanceMap[$nagsasanayId][$sessionId] ?? false;
+        $changes = 0;
 
-        NagsasanayMonitoringAttendance::updateOrCreate(
-            ['nagsasanay_id' => $nagsasanayId, 'session_id' => $sessionId],
-            ['is_present' => !$current]
-        );
+        DB::transaction(function () use (&$changes) {
+            foreach ($this->pending as $nagsasanayId => $sessions) {
+                foreach ($sessions as $sessionId => $value) {
+                    $value = (bool) $value;
+                    $saved = $this->attendanceMap[$nagsasanayId][$sessionId] ?? false;
 
-        $this->attendanceMap[$nagsasanayId][$sessionId] = !$current;
+                    if ($value === $saved) {
+                        continue;
+                    }
+
+                    NagsasanayMonitoringAttendance::updateOrCreate(
+                        ['nagsasanay_id' => $nagsasanayId, 'session_id' => $sessionId],
+                        ['is_present' => $value]
+                    );
+                    $changes++;
+                }
+            }
+        });
+
+        $this->loadAttendance();
+
+        Notification::make()
+            ->title($changes > 0 ? "Attendance recorded ({$changes} change/s)." : 'No changes to record.')
+            ->success()
+            ->send();
     }
 
     public function previousMonth(): void
@@ -166,7 +192,7 @@ class NagsasanayMonitoring extends Page
         return [];
     }
 
-   protected function getViewData(): array
+    protected function getViewData(): array
     {
         return [
             'sessions'      => $this->getSessions(),

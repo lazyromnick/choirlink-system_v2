@@ -88,4 +88,38 @@ class Nagsasanay extends Model
     {
         return $this->belongsTo(PurokGrupo::class, 'purok_grupo_id');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (Nagsasanay $nagsasanay) {
+            if ($nagsasanay->training_track !== 'Mang-aawit') {
+                return; // Organista track: leave their real membership untouched
+            }
+
+            $mangAawit = \App\Models\MangAawit::where('mang_aawit_id', $nagsasanay->mang_aawit_id)->first();
+
+            if (!$mangAawit) {
+                return;
+            }
+
+            $account = $mangAawit->account;
+
+            if ($account && $account->account_status === 'Active') {
+                $account->update(['account_status' => 'Inactive']);
+
+                $account->histories()->create([
+                    'event_type'      => 'Deactivation',
+                    'previous_status' => 'Active',
+                    'new_status'      => 'Inactive',
+                    'reason'          => 'Automatically deactivated — Nagsasanay training ended.',
+                    'changed_by'      => auth()->id(),
+                    'actor_type'      => 'Admin',
+                ]);
+            }
+
+            $mangAawit->delete();
+        });
+    }
 }

@@ -23,6 +23,12 @@ class ListNagsasanays extends ListRecords
                 ->icon('heroicon-o-musical-note')
                 ->color('warning')
                 ->url(NagsasanayResource::getUrl('create-organista')),
+
+            Actions\Action::make('viewArchived')
+                ->label('View Archived')
+                ->icon('heroicon-o-archive-box')
+                ->color('gray')
+                ->url(fn () => NagsasanayResource::getUrl('archived')),
         ];
     }
 }

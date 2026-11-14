@@ -321,6 +321,7 @@ class NagsasanayResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -337,11 +338,12 @@ class NagsasanayResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'          => Pages\ListNagsasanays::route('/'),
-            'create-trainee' => Pages\CreateNagsasanayMangAawit::route('/create-trainee'),
-            'create-organista' => Pages\CreateNagsasanayOrganista::route('/create-organista'),
-            'view'           => Pages\ViewNagsasanay::route('/{record}'),
-            'edit'           => Pages\EditNagsasanay::route('/{record}/edit'),
+            'index'             => Pages\ListNagsasanays::route('/'),
+            'create-trainee'    => Pages\CreateNagsasanayMangAawit::route('/create-trainee'),
+            'create-organista'  => Pages\CreateNagsasanayOrganista::route('/create-organista'),
+            'archived'          => Pages\ListArchivedNagsasanays::route('/archived'),
+            'view'              => Pages\ViewNagsasanay::route('/{record}'),
+            'edit'              => Pages\EditNagsasanay::route('/{record}/edit'),
         ];
     }
 }

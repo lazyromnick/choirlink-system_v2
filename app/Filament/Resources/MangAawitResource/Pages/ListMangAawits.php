@@ -14,6 +14,11 @@ class ListMangAawits extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('viewArchived')
+                ->label('View Archived')
+                ->icon('heroicon-o-archive-box')
+                ->color('gray')
+                ->url(fn () => MangAawitResource::getUrl('archived')),
         ];
     }
 }

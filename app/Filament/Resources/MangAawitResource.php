@@ -245,6 +245,24 @@ class MangAawitResource extends Resource
                             default    => 'gray',
                         }),
                 ]),
+
+            \Filament\Infolists\Components\Section::make('Account History')
+                ->schema([
+                    \Filament\Infolists\Components\RepeatableEntry::make('account.histories')
+                        ->label('')
+                        ->schema([
+                            \Filament\Infolists\Components\TextEntry::make('event_type')
+                                ->label('Event'),
+                            \Filament\Infolists\Components\TextEntry::make('created_at')
+                                ->label('Date')
+                                ->dateTime(),
+                            \Filament\Infolists\Components\TextEntry::make('reason')
+                                ->label('Reason')
+                                ->placeholder('—'),
+                        ])
+                        ->columns(3),
+                ])
+                ->collapsible(),
         ]);
     }
 
@@ -315,7 +333,99 @@ class MangAawitResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-            ])
+
+                Tables\Actions\Action::make('deactivate')
+                    ->label('Deactivate')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (MangAawit $record): bool => $record->account?->account_status === 'Active')
+                    ->form([
+                        Forms\Components\Textarea::make('reason')
+                            ->label('Reason for deactivation')
+                            ->required(),
+                    ])
+                    ->action(function (MangAawit $record, array $data) {
+                        $account = $record->account;
+                        if (!$account) return;
+
+                        $account->update(['account_status' => 'Inactive']);
+
+                        $account->histories()->create([
+                            'event_type'      => 'Deactivation',
+                            'previous_status' => 'Active',
+                            'new_status'      => 'Inactive',
+                            'reason'          => $data['reason'],
+                            'changed_by'      => \Illuminate\Support\Facades\Auth::id(),
+                            'actor_type'      => 'Admin',
+                        ]);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Account deactivated')
+                            ->success()
+                            ->send();
+                    })
+                    ->requiresConfirmation(),
+
+                        Tables\Actions\Action::make('activate')
+                            ->label('Activate')
+                            ->icon('heroicon-o-check-circle')
+                            ->color('success')
+                            ->visible(fn (MangAawit $record): bool => $record->account?->account_status === 'Inactive')
+                            ->action(function (MangAawit $record) {
+                                $account = $record->account;
+                                if (!$account) return;
+
+                                $account->update(['account_status' => 'Active']);
+
+                                $account->histories()->create([
+                                    'event_type'      => 'Activation',
+                                    'previous_status' => 'Inactive',
+                                    'new_status'      => 'Active',
+                                    'reason'          => null,
+                                    'changed_by'      => \Illuminate\Support\Facades\Auth::id(),
+                                    'actor_type'      => 'Admin',
+                                ]);
+
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Account activated')
+                                    ->success()
+                                    ->send();
+                            })
+                            ->requiresConfirmation(),
+
+                        Tables\Actions\Action::make('resetPassword')
+                            ->label('Reset Password')
+                            ->icon('heroicon-o-key')
+                            ->color('warning')
+                            ->action(function (MangAawit $record) {
+                                $account = $record->account;
+                                if (!$account) return;
+
+                                $newPassword = $record->birthday->format('Ymd');
+                                $account->update([
+                                    'password'             => $newPassword,
+                                    'must_change_password' => true,
+                                ]);
+
+                                $account->histories()->create([
+                                    'event_type'      => 'Password Reset',
+                                    'previous_status' => null,
+                                    'new_status'      => null,
+                                    'reason'          => null,
+                                    'changed_by'      => \Illuminate\Support\Facades\Auth::id(),
+                                    'actor_type'      => 'Admin',
+                                ]);
+
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Password reset to birthday-based temporary password')
+                                    ->success()
+                                    ->send();
+                            })
+                            ->requiresConfirmation(),
+
+                            Tables\Actions\RestoreAction::make(),
+                            Tables\Actions\DeleteAction::make(),
+                    ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -331,10 +441,11 @@ class MangAawitResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListMangAawits::route('/'),
-            'create' => Pages\CreateMangAawit::route('/create'),
-            'view'   => Pages\ViewMangAawit::route('/{record}'),
-            'edit'   => Pages\EditMangAawit::route('/{record}/edit'),
+            'index'    => Pages\ListMangAawits::route('/'),
+            'create'   => Pages\CreateMangAawit::route('/create'),
+            'archived' => Pages\ListArchivedMangAawits::route('/archived'),
+            'view'     => Pages\ViewMangAawit::route('/{record}'),
+            'edit'     => Pages\EditMangAawit::route('/{record}/edit'),
         ];
     }
 }

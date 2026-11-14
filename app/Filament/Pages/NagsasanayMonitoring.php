@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages;
 
+
+
+
 use App\Models\Nagsasanay;
 use App\Models\NagsasanayMonitoringAttendance;
 use App\Models\NagsasanayMonitoringSession;
@@ -16,6 +19,8 @@ class NagsasanayMonitoring extends Page
     protected static ?string $title = 'Nagsasanay Monitoring';
     protected static ?int $navigationSort = 3;
     protected static string $view = 'filament.pages.nagsasanay-monitoring';
+
+    protected static string $layout = 'filament-panels::components.layout.index';
 
     public int $month;
     public int $year;
@@ -161,12 +166,17 @@ class NagsasanayMonitoring extends Page
         return [];
     }
 
-    public function render(): \Illuminate\View\View
+   protected function getViewData(): array
     {
-        return view('filament.pages.nagsasanay-monitoring', [
+        return [
             'sessions'      => $this->getSessions(),
             'mangAawitList' => $this->getMangAawitList(),
             'organistaList' => $this->getOrganistaList(),
-        ]);
+        ];
+    }
+
+    public function getLayout(): string
+    {
+        return 'filament-panels::components.layout.index';
     }
 }

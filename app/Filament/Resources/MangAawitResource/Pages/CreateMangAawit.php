@@ -17,38 +17,49 @@ class CreateMangAawit extends CreateRecord
     protected string $qrToken = '';
 
     protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
-    {
-        $service = new CreateMangAawitService(new MangAawitIdGenerator());
+{
+    $service = new CreateMangAawitService(new MangAawitIdGenerator());
 
-        $personalData = [
-            'first_name'      => $data['first_name'],
-            'middle_name'     => $data['middle_name'] ?? null,
-            'last_name'       => $data['last_name'],
-            'suffix'          => $data['suffix'] ?? null,
-            'birthday'        => $data['birthday'],
-            'sex'             => $data['sex'],
-            'address'         => $data['address'],
-            'date_registered' => $data['date_registered'],
-        ];
-
-        $membershipData = [
-            'membership_classification' => $data['membership_classification'],
-            'designation'               => $data['designation'],
-            'tungkulin'                 => $data['tungkulin'],
-            'tungkulin_status'          => $data['tungkulin_status'],
-            'mang_aawit_in'             => $data['mang_aawit_in'],
-            'previous_locale'           => $data['previous_locale'] ?? null,
-            'destination_locale'        => $data['destination_locale'] ?? null,
-            'transfer_date'             => $data['transfer_date'] ?? null,
-        ];
-
-        $result = $service->create($personalData, $membershipData, Auth::id());
-
-        $this->initialPassword = $result['initialPassword'];
-        $this->qrToken         = $result['qrToken'];
-
-        return $result['mangAawit'];
+    // Clear transfer fields that don't apply to the chosen classification
+    if ($data['membership_classification'] === 'Taga-lokal') {
+        $data['previous_locale']    = null;
+        $data['destination_locale'] = null;
+        $data['transfer_date']      = null;
+    } elseif ($data['membership_classification'] === 'Transfer-In') {
+        $data['destination_locale'] = null;
+    } elseif ($data['membership_classification'] === 'Transfer-Out') {
+        $data['previous_locale']    = null;
     }
+
+    $personalData = [
+        'first_name'      => $data['first_name'],
+        'middle_name'     => $data['middle_name'] ?? null,
+        'last_name'       => $data['last_name'],
+        'suffix'          => $data['suffix'] ?? null,
+        'birthday'        => $data['birthday'],
+        'sex'             => $data['sex'],
+        'address'         => $data['address'],
+        'date_registered' => $data['date_registered'],
+    ];
+
+    $membershipData = [
+        'membership_classification' => $data['membership_classification'],
+        'designation'               => $data['designation'],
+        'tungkulin'                 => $data['tungkulin'],
+        'tungkulin_status'          => $data['tungkulin_status'],
+        'mang_aawit_in'             => $data['mang_aawit_in'],
+        'previous_locale'           => $data['previous_locale'] ?? null,
+        'destination_locale'        => $data['destination_locale'] ?? null,
+        'transfer_date'             => $data['transfer_date'] ?? null,
+    ];
+
+    $result = $service->create($personalData, $membershipData, Auth::id());
+
+    $this->initialPassword = $result['initialPassword'];
+    $this->qrToken         = $result['qrToken'];
+
+    return $result['mangAawit'];
+}
 
     protected function afterCreate(): void
     {

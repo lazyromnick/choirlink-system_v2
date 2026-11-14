@@ -79,6 +79,80 @@ class MangAawitResource extends Resource
             ])
             ->columns(2),
 
+            Forms\Components\Section::make('Membership Information')
+    ->schema([
+        Forms\Components\Select::make('membership_classification')
+    ->label('Membership Classification')
+    ->options([
+        'Taga-lokal'   => 'Taga-lokal',
+        'Transfer-In'  => 'Transfer-In',
+        'Transfer-Out' => 'Transfer-Out',
+    ])
+    ->required()
+    ->live()
+    ->afterStateUpdated(function (Forms\Set $set, $state) {
+        if ($state === 'Taga-lokal') {
+            $set('previous_locale', null);
+            $set('destination_locale', null);
+            $set('transfer_date', null);
+        } elseif ($state === 'Transfer-In') {
+            $set('destination_locale', null);
+        } elseif ($state === 'Transfer-Out') {
+            $set('previous_locale', null);
+        }
+    }),
+
+        Forms\Components\Select::make('designation')
+            ->label('Designation')
+            ->options([
+                'Regular'    => 'Regular',
+                'Nagsasanay' => 'Nagsasanay',
+            ])
+            ->required(),
+
+        Forms\Components\Select::make('tungkulin')
+            ->label('Tungkulin')
+            ->options([
+                'Mang-aawit' => 'Mang-aawit',
+                'Organista'  => 'Organista',
+            ])
+            ->required(),
+
+        Forms\Components\Select::make('tungkulin_status')
+            ->label('Tungkulin Status')
+            ->options([
+                'Active'   => 'Active',
+                'Inactive' => 'Inactive',
+            ])
+            ->required(),
+
+        Forms\Components\Select::make('mang_aawit_in')
+            ->label('Worship Service')
+            ->options([
+                'AWS' => 'AWS',
+                'CWS' => 'CWS',
+            ])
+            ->required(),
+
+        Forms\Components\TextInput::make('previous_locale')
+            ->label('Previous Locale')
+            ->maxLength(255)
+            ->visible(fn (Forms\Get $get) => $get('membership_classification') === 'Transfer-In')
+            ->required(fn (Forms\Get $get) => $get('membership_classification') === 'Transfer-In'),
+
+        Forms\Components\TextInput::make('destination_locale')
+            ->label('Destination Locale')
+            ->maxLength(255)
+            ->visible(fn (Forms\Get $get) => $get('membership_classification') === 'Transfer-Out')
+            ->required(fn (Forms\Get $get) => $get('membership_classification') === 'Transfer-Out'),
+
+        Forms\Components\DatePicker::make('transfer_date')
+            ->label('Transfer Date')
+            ->visible(fn (Forms\Get $get) => in_array($get('membership_classification'), ['Transfer-In', 'Transfer-Out']))
+            ->required(fn (Forms\Get $get) => in_array($get('membership_classification'), ['Transfer-In', 'Transfer-Out'])),
+    ])
+    ->columns(2),
+
     ]);
 }
 

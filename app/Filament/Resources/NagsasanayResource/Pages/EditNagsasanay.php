@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\NagsasanayResource\Pages;
 
 use App\Filament\Resources\NagsasanayResource;
+use App\Models\MangAawit;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -31,6 +32,14 @@ class EditNagsasanay extends EditRecord
     {
         $record = $this->record;
 
+        $becameCompleted = $record->progress_stage === 'Completed'
+            && $this->previousProgressStage !== 'Completed';
+
+        if ($becameCompleted) {
+            $this->completeTraining($record);
+            return;
+        }
+
         $becameDiscontinued = $record->progress_stage === 'Discontinued'
             && $this->previousProgressStage !== 'Discontinued';
 
@@ -50,6 +59,61 @@ class EditNagsasanay extends EditRecord
 
             $this->redirect(NagsasanayResource::getUrl('index'));
         }
+    }
+
+    protected function completeTraining($record): void
+    {
+        if ($record->training_track === 'Mang-aawit') {
+            $mangAawit = MangAawit::where('mang_aawit_id', $record->mang_aawit_id)->first();
+
+            if (!$mangAawit) {
+                Notification::make()
+                    ->title('Could not complete training')
+                    ->body('No linked Mang-aawit account was found for this trainee.')
+                    ->danger()
+                    ->send();
+                return;
+            }
+
+            $mangAawit->currentMembership?->update([
+                'designation' => 'Regular',
+            ]);
+
+            $record->update(['mang_aawit_record_id' => $mangAawit->id]);
+            $record->delete();
+
+            Notification::make()
+                ->title('Nagsasanay completed training')
+                ->body("{$record->full_name} has graduated and is now a Regular Mang-aawit.")
+                ->success()
+                ->send();
+        } else {
+            // Organista track
+            $mangAawit = $record->mangAawit;
+
+            if (!$mangAawit) {
+                Notification::make()
+                    ->title('Could not complete training')
+                    ->body('No linked Mang-aawit record was found for this trainee.')
+                    ->danger()
+                    ->send();
+                return;
+            }
+
+            $mangAawit->currentMembership?->update([
+                'tungkulin' => 'Organista',
+            ]);
+
+            $record->delete();
+
+            Notification::make()
+                ->title('Nagsasanay completed training')
+                ->body("{$mangAawit->full_name} has completed Organista training and their tungkulin has been updated.")
+                ->success()
+                ->send();
+        }
+
+        $this->redirect(NagsasanayResource::getUrl('index'));
     }
 
     protected function getRedirectUrl(): string

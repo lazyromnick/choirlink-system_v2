@@ -3,44 +3,23 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Nagsasanay;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Widget;
 
-class TotalNagsasanayWidget extends BaseWidget
+class TotalNagsasanayWidget extends Widget
 {
+    protected static string $view = 'filament.widgets.total-nagsasanay-widget';
     protected static ?int $sort = 2;
 
-    protected function getStats(): array
+    protected function getViewData(): array
     {
-        $total = Nagsasanay::whereNull('deleted_at')->count();
-
-        $mangAawitMale = Nagsasanay::whereNull('deleted_at')
-            ->where('training_track', 'Mang-aawit')
-            ->where('sex', 'Male')
-            ->count();
-
-        $mangAawitFemale = Nagsasanay::whereNull('deleted_at')
-            ->where('training_track', 'Mang-aawit')
-            ->where('sex', 'Female')
-            ->count();
-
-        $organistaMale = Nagsasanay::whereNull('deleted_at')
-            ->where('training_track', 'Organista')
-            ->whereHas('mangAawit', fn ($q) => $q->where('sex', 'Male'))
-            ->count();
-
-        $organistaFemale = Nagsasanay::whereNull('deleted_at')
-            ->where('training_track', 'Organista')
-            ->whereHas('mangAawit', fn ($q) => $q->where('sex', 'Female'))
-            ->count();
-
         return [
-            Stat::make('Total Nagsasanay', $total)
-                ->description(
-                    "Mang-aawit — Male: {$mangAawitMale} · Female: {$mangAawitFemale}" . "\n" .
-                    "Organista — Male: {$organistaMale} · Female: {$organistaFemale}"
-                )
-                ->color('info'),
+            'total' => Nagsasanay::whereNull('deleted_at')->count(),
+
+            'mangAawitMale'   => Nagsasanay::whereNull('deleted_at')->where('training_track', 'Mang-aawit')->where('sex', 'Male')->count(),
+            'mangAawitFemale' => Nagsasanay::whereNull('deleted_at')->where('training_track', 'Mang-aawit')->where('sex', 'Female')->count(),
+
+            'organistaMale'   => Nagsasanay::whereNull('deleted_at')->where('training_track', 'Organista')->whereHas('mangAawit', fn ($q) => $q->where('sex', 'Male'))->count(),
+            'organistaFemale' => Nagsasanay::whereNull('deleted_at')->where('training_track', 'Organista')->whereHas('mangAawit', fn ($q) => $q->where('sex', 'Female'))->count(),
         ];
     }
 }

@@ -41,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 \App\Filament\Widgets\TotalMangAawitWidget::class,
                 \App\Filament\Widgets\TotalNagsasanayWidget::class,
+                \App\Filament\Widgets\GawainAttendancePercentageWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

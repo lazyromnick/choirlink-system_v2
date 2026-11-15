@@ -3,69 +3,30 @@
 namespace App\Filament\Widgets;
 
 use App\Models\MangAawit;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Widget;
 
-class TotalMangAawitWidget extends BaseWidget
+class TotalMangAawitWidget extends Widget
 {
+    protected static string $view = 'filament.widgets.total-mang-aawit-widget';
     protected static ?int $sort = 1;
 
-    protected function getStats(): array
+    protected function getViewData(): array
     {
-        $total = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular'))
-            ->count();
-
-        $totalMale = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular'))
-            ->where('sex', 'Male')
-            ->count();
-
-        $totalFemale = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular'))
-            ->where('sex', 'Female')
-            ->count();
-
-        $active = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular')->where('tungkulin_status', 'Active'))
-            ->count();
-
-        $activeMale = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular')->where('tungkulin_status', 'Active'))
-            ->where('sex', 'Male')
-            ->count();
-
-        $activeFemale = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular')->where('tungkulin_status', 'Active'))
-            ->where('sex', 'Female')
-            ->count();
-
-        $inactive = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular')->where('tungkulin_status', 'Inactive'))
-            ->count();
-
-        $inactiveMale = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular')->where('tungkulin_status', 'Inactive'))
-            ->where('sex', 'Male')
-            ->count();
-
-        $inactiveFemale = MangAawit::whereNull('deleted_at')
-            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular')->where('tungkulin_status', 'Inactive'))
-            ->where('sex', 'Female')
-            ->count();
+        $base = fn () => MangAawit::whereNull('deleted_at')
+            ->whereHas('currentMembership', fn ($q) => $q->where('designation', 'Regular'));
 
         return [
-            Stat::make('Total Mang-aawit', $total)
-                ->description("Male: {$totalMale} · Female: {$totalFemale}")
-                ->color('primary'),
+            'total'         => $base()->count(),
+            'totalMale'     => $base()->where('sex', 'Male')->count(),
+            'totalFemale'   => $base()->where('sex', 'Female')->count(),
 
-            Stat::make('Active Mang-aawit', $active)
-                ->description("Male: {$activeMale} · Female: {$activeFemale}")
-                ->color('success'),
+            'active'        => $base()->whereHas('currentMembership', fn ($q) => $q->where('tungkulin_status', 'Active'))->count(),
+            'activeMale'    => $base()->whereHas('currentMembership', fn ($q) => $q->where('tungkulin_status', 'Active'))->where('sex', 'Male')->count(),
+            'activeFemale'  => $base()->whereHas('currentMembership', fn ($q) => $q->where('tungkulin_status', 'Active'))->where('sex', 'Female')->count(),
 
-            Stat::make('Inactive Mang-aawit', $inactive)
-                ->description("Male: {$inactiveMale} · Female: {$inactiveFemale}")
-                ->color('danger'),
+            'inactive'       => $base()->whereHas('currentMembership', fn ($q) => $q->where('tungkulin_status', 'Inactive'))->count(),
+            'inactiveMale'   => $base()->whereHas('currentMembership', fn ($q) => $q->where('tungkulin_status', 'Inactive'))->where('sex', 'Male')->count(),
+            'inactiveFemale' => $base()->whereHas('currentMembership', fn ($q) => $q->where('tungkulin_status', 'Inactive'))->where('sex', 'Female')->count(),
         ];
     }
 }

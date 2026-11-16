@@ -141,4 +141,46 @@ class HanduganMonitoring extends Page
     {
         return 'filament-panels::components.layout.index';
     }
+
+    public function refreshDenominator(int $weekId): void
+    {
+        $week = HanduganMonitoringWeek::find($weekId);
+
+        if (!$week) {
+            return;
+        }
+
+        $oldDenominator = $week->denominator_snapshot;
+        $newDenominator = HanduganMonitoringWeek::currentDenominator();
+
+        $week->update(['denominator_snapshot' => $newDenominator]);
+
+        \Filament\Notifications\Notification::make()
+            ->title('Denominator refreshed')
+            ->body("Week {$week->week_number}: {$oldDenominator} → {$newDenominator}. Percentages for this week have been recalculated.")
+            ->success()
+            ->send();
+    }
+
+    public function refreshAllDenominators(): void
+    {
+        $newDenominator = HanduganMonitoringWeek::currentDenominator();
+        $weeks = $this->getWeeks();
+
+        $changed = 0;
+
+        foreach ($weeks as $week) {
+            if ($week->denominator_snapshot !== $newDenominator) {
+                $week->update(['denominator_snapshot' => $newDenominator]);
+                $changed++;
+            }
+        }
+
+        \Filament\Notifications\Notification::make()
+            ->title($changed > 0
+                ? "Refreshed {$changed} week(s) to the current denominator ({$newDenominator})."
+                : 'All weeks already match the current denominator.')
+            ->success()
+            ->send();
+    }
 }

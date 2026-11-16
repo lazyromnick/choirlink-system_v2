@@ -13,6 +13,18 @@
 
     <x-filament::section>
         <x-slot name="heading">Weekly Handugan Participation</x-slot>
+        <x-slot name="headerEnd">
+            <x-filament::button
+                wire:click="refreshAllDenominators"
+                wire:loading.attr="disabled"
+                wire:target="refreshAllDenominators"
+                color="gray"
+                icon="heroicon-o-arrow-path"
+                size="sm"
+            >
+                Refresh All Weeks
+            </x-filament::button>
+        </x-slot>
 
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -35,7 +47,19 @@
                                 <div class="font-semibold">Week {{ $week->week_number }}</div>
                                 <div class="text-xs text-gray-500">{{ $week->start_date->format('M d') }} - {{ $week->end_date->format('d') }}</div>
                             </td>
-                            <td class="py-2 px-3 text-gray-500">{{ $week->denominator_snapshot }}</td>
+                            <td class="py-2 px-3 text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <span>{{ $week->denominator_snapshot }}</span>
+                                    <button
+                                        wire:click="refreshDenominator({{ $week->id }})"
+                                        wire:loading.attr="disabled"
+                                        title="Refresh denominator to current count"
+                                        class="text-gray-400 hover:text-primary-600 transition-colors"
+                                    >
+                                        <x-heroicon-o-arrow-path class="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </td>
                             <td class="text-center py-2 px-2">
                                 <input type="number" min="0"
                                     wire:model="pending.{{ $week->id }}.th_count"

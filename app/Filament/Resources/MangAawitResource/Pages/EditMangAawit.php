@@ -13,13 +13,6 @@ class EditMangAawit extends EditRecord
 
     protected array $membershipData = [];
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
-
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $membership = $this->record->currentMembership;

@@ -79,7 +79,6 @@ class EditNagsasanay extends EditRecord
                 'designation' => 'Regular',
             ]);
 
-            $record->update(['mang_aawit_record_id' => $mangAawit->id]);
             $record->delete();
 
             Notification::make()

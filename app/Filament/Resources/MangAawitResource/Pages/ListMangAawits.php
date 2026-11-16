@@ -29,7 +29,7 @@ class ListMangAawits extends ListRecords
             Actions\Action::make('exportRecord')
                 ->label('Export Record')
                 ->icon('heroicon-o-arrow-down-tray')
-                ->color('success')
+                ->color('info')
                 ->form([
                     Forms\Components\Radio::make('format')
                         ->label('Export Format')

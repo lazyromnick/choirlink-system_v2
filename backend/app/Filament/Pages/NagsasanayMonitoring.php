@@ -117,7 +117,7 @@ class NagsasanayMonitoring extends Page
         $this->loadAttendance();
 
         Notification::make()
-            ->title($changes > 0 ? "Attendance recorded ({$changes} change/s)." : 'No changes to record.')
+            ->title($changes > 0 ? "Attendance recorded ({$changes} changes)." : 'No changes to record.')
             ->success()
             ->send();
     }

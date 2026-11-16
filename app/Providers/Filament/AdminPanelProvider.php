@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Pages\Dashboard::class,
                 \App\Filament\Pages\NagsasanayMonitoring::class,
                 \App\Filament\Pages\GawainMonitoring::class,
+                \App\Filament\Pages\HanduganMonitoring::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([

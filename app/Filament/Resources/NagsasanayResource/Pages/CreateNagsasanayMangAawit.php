@@ -91,10 +91,10 @@ class CreateNagsasanayMangAawit extends Page
                             ->maxLength(150),
 
                         Forms\Components\Select::make('mang_aawit_in')
-                            ->label('Worship Service')
+                            ->label('Mang-aawit in')
                             ->options([
-                                'AWS' => 'AWS — Adult Worship Service',
-                                'CWS' => 'CWS — Children\'s Worship Service',
+                                'AWS' => 'Katandaan',
+                                'CWS' => 'Kabataan',
                             ])
                             ->required(),
 

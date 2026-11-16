@@ -102,13 +102,8 @@ class MangAawitResource extends Resource
         }
     }),
 
-        Forms\Components\Select::make('designation')
-            ->label('Designation')
-            ->options([
-                'Regular'    => 'Regular',
-                'Nagsasanay' => 'Nagsasanay',
-            ])
-            ->required(),
+        Forms\Components\Hidden::make('designation')
+            ->default('Regular'),
 
         Forms\Components\Select::make('tungkulin')
             ->label('Tungkulin')
@@ -127,10 +122,10 @@ class MangAawitResource extends Resource
             ->required(),
 
         Forms\Components\Select::make('mang_aawit_in')
-            ->label('Worship Service')
+            ->label('Mang-aawit in')
             ->options([
-                'AWS' => 'AWS',
-                'CWS' => 'CWS',
+                'AWS' => 'Katandaan',
+                'CWS' => 'Kabataan',
             ])
             ->required(),
 

@@ -13,7 +13,9 @@ class ListMangAawits extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Enroll Mang-aawit'),
+                
             Actions\Action::make('viewArchived')
                 ->label('View Archived')
                 ->icon('heroicon-o-archive-box')

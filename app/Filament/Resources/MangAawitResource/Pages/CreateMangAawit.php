@@ -16,6 +16,8 @@ class CreateMangAawit extends CreateRecord
     protected string $initialPassword = '';
     protected string $qrToken = '';
 
+    protected static ?string $title = 'Enroll Mang-aawit';
+
     protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
 {
     $service = new CreateMangAawitService(new MangAawitIdGenerator());
@@ -40,6 +42,7 @@ class CreateMangAawit extends CreateRecord
         'sex'             => $data['sex'],
         'address'         => $data['address'],
         'date_registered' => $data['date_registered'],
+        'purok_grupo_id'  => $data['purok_grupo_id'] ?? null,
     ];
 
     $membershipData = [

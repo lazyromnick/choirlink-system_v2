@@ -79,7 +79,7 @@ class NagsasanayResource extends Resource
                     ->label('Training Start Date'),
 
                 Forms\Components\TextInput::make('trainer_name')
-                    ->label('Trainer / Responsible Person')
+                    ->label('Nag-recruit')
                     ->maxLength(150),
 
                 Forms\Components\Select::make('progress_stage')
@@ -118,10 +118,10 @@ class NagsasanayResource extends Resource
                     ->live(),
 
                 Forms\Components\Select::make('mang_aawit_in')
-                    ->label('Worship Service')
+                    ->label('Mang-aawit in')
                     ->options([
-                        'AWS' => 'AWS — Adult Worship Service',
-                        'CWS' => 'CWS — Children\'s Worship Service',
+                        'AWS' => 'Katandaan',
+                        'CWS' => 'Kabataan',
                     ]),
 
                 Forms\Components\DatePicker::make('transfer_date')
@@ -181,7 +181,7 @@ class NagsasanayResource extends Resource
                         ->date(),
 
                     \Filament\Infolists\Components\TextEntry::make('trainer_name')
-                        ->label('Trainer / Responsible Person'),
+                        ->label('Nag-recruit'),
 
                     \Filament\Infolists\Components\TextEntry::make('progress_stage')
                         ->label('Progress Stage')
@@ -218,7 +218,7 @@ class NagsasanayResource extends Resource
                         ->placeholder('Not yet set'),
 
                     \Filament\Infolists\Components\TextEntry::make('mang_aawit_in')
-                        ->label('Worship Service')
+                        ->label('Mang-aawit in')
                         ->placeholder('Not yet set'),
 
                     \Filament\Infolists\Components\TextEntry::make('previous_locale')
@@ -286,7 +286,7 @@ class NagsasanayResource extends Resource
                     }),
 
                 Tables\Columns\TextColumn::make('trainer_name')
-                    ->label('Trainer')
+                    ->label('Nag-recruit')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('progress_stage')

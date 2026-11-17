@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
 class MangAawitAccount extends Authenticatable
 {
-    use HasFactory;
-
+    use HasFactory, HasApiTokens;
     protected $table = 'mang_aawit_accounts';
 
     protected $fillable = [

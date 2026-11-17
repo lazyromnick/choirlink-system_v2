@@ -27,10 +27,10 @@
 
     {{-- Add Date Form --}}
     <x-filament::section>
-        <x-slot name="heading">Add Session Date</x-slot>
+        <x-slot name="heading">Add Ensayo Date</x-slot>
         <div class="flex items-end gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Session Date</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ensayo Date</label>
                 <input
                     type="date"
                     wire:model="newSessionDate"
@@ -240,7 +240,7 @@
                     <thead>
                         <tr class="border-b">
                             <th class="text-left py-2">Name</th>
-                            <th class="text-center py-2">Sessions</th>
+                            <th class="text-center py-2">Ensayo</th>
                             <th class="text-center py-2">Attended</th>
                             <th class="text-center py-2">%</th>
                         </tr>
@@ -264,7 +264,7 @@
                     <thead>
                         <tr class="border-b">
                             <th class="text-left py-2">Name</th>
-                            <th class="text-center py-2">Sessions</th>
+                            <th class="text-center py-2">Ensayo</th>
                             <th class="text-center py-2">Attended</th>
                             <th class="text-center py-2">%</th>
                         </tr>

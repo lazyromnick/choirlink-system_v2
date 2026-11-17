@@ -157,6 +157,79 @@
         </x-filament::button>
     </div>
 
+    {{-- Absents Section --}}
+    <x-filament::section class="mt-6">
+        <x-slot name="heading">Absents — Nagsasanay (Mang-aawit)</x-slot>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b">
+                        @foreach($mangAawitAbsents['sessions'] as $session)
+                            <th class="text-center py-2 px-3 min-w-[100px]">{{ $session->session_date->format('M d') }}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @for($row = 0; $row < $mangAawitAbsents['maxRows']; $row++)
+                        <tr class="border-b">
+                            @foreach($mangAawitAbsents['sessions'] as $session)
+                                <td class="text-center py-1 px-3">
+                                    {{ $mangAawitAbsents['columns'][$session->id][$row] ?? '' }}
+                                </td>
+                            @endforeach
+                        </tr>
+                    @endfor
+                    <tr class="font-bold border-t-2">
+                        @foreach($mangAawitAbsents['sessions'] as $session)
+                            <td class="text-center py-2 px-3">
+                                {{ count($mangAawitAbsents['columns'][$session->id]) }}
+                            </td>
+                        @endforeach
+                    </tr>
+                </tbody>
+            </table>
+            @if($mangAawitAbsents['sessions']->isEmpty())
+                <p class="text-center text-gray-400 py-4">No session dates for this month.</p>
+            @endif
+        </div>
+    </x-filament::section>
+
+    <x-filament::section class="mt-6">
+        <x-slot name="heading">Absents — Nagsasanay (Organista)</x-slot>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b">
+                        @foreach($organistaAbsents['sessions'] as $session)
+                            <th class="text-center py-2 px-3 min-w-[100px]">{{ $session->session_date->format('M d') }}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @for($row = 0; $row < $organistaAbsents['maxRows']; $row++)
+                        <tr class="border-b">
+                            @foreach($organistaAbsents['sessions'] as $session)
+                                <td class="text-center py-1 px-3">
+                                    {{ $organistaAbsents['columns'][$session->id][$row] ?? '' }}
+                                </td>
+                            @endforeach
+                        </tr>
+                    @endfor
+                    <tr class="font-bold border-t-2">
+                        @foreach($organistaAbsents['sessions'] as $session)
+                            <td class="text-center py-2 px-3">
+                                {{ count($organistaAbsents['columns'][$session->id]) }}
+                            </td>
+                        @endforeach
+                    </tr>
+                </tbody>
+            </table>
+            @if($organistaAbsents['sessions']->isEmpty())
+                <p class="text-center text-gray-400 py-4">No session dates for this month.</p>
+            @endif
+        </div>
+    </x-filament::section>
+
     {{-- Summary Section --}}
     <x-filament::section class="mt-6">
         <x-slot name="heading">Summary — {{ \Carbon\Carbon::create($year, $month)->format('F Y') }}</x-slot>

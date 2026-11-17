@@ -195,14 +195,44 @@ class NagsasanayMonitoring extends Page
     protected function getViewData(): array
     {
         return [
-            'sessions'      => $this->getSessions(),
-            'mangAawitList' => $this->getMangAawitList(),
-            'organistaList' => $this->getOrganistaList(),
+            'sessions'          => $this->getSessions(),
+            'mangAawitList'     => $this->getMangAawitList(),
+            'organistaList'     => $this->getOrganistaList(),
+            'mangAawitAbsents'  => $this->getAbsenteesGrid($this->getMangAawitList()),
+            'organistaAbsents'  => $this->getAbsenteesGrid($this->getOrganistaList()),
         ];
     }
 
     public function getLayout(): string
     {
         return 'filament-panels::components.layout.index';
+    }
+
+    public function getAbsentNames(int $sessionId, $list): array
+    {
+        return $list
+            ->reject(fn ($nagsasanay) => $this->isPresent($nagsasanay->id, $sessionId))
+            ->pluck('full_name')
+            ->values()
+            ->all();
+    }
+
+    public function getAbsenteesGrid($list): array
+    {
+        $sessions = $this->getSessions();
+        $columns  = [];
+        $maxRows  = 0;
+
+        foreach ($sessions as $session) {
+            $names = $this->getAbsentNames($session->id, $list);
+            $columns[$session->id] = $names;
+            $maxRows = max($maxRows, count($names));
+        }
+
+        return [
+            'sessions' => $sessions,
+            'columns'  => $columns,
+            'maxRows'  => $maxRows,
+        ];
     }
 }

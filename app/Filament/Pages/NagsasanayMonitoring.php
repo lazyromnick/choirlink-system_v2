@@ -16,6 +16,8 @@ class NagsasanayMonitoring extends Page
     protected static ?string $navigationLabel = 'Nagsasanay Monitoring';
     protected static ?string $title = 'Nagsasanay Monitoring';
     protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationGroup = 'Nagsasanay';
     protected static string $view = 'filament.pages.nagsasanay-monitoring';
 
     protected static string $layout = 'filament-panels::components.layout.index';

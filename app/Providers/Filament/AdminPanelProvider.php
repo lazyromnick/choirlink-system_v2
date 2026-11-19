@@ -27,6 +27,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('ChoirLink System')
+            ->brandLogo(asset('images/choirlink-logo.png'))
+            ->brandLogoHeight('3.8rem')
             ->colors([
                 'primary' => Color::Green,
                 'info'=> Color::Blue,

@@ -20,6 +20,7 @@ class PurokGrupoResource extends Resource
     protected static ?string $pluralModelLabel = 'Purok-Grupo';
     protected static ?int $navigationSort = 3;
 
+    protected static ?string $navigationGroup = 'Purok-Grupo';
     public static function form(Form $form): Form
     {
         return $form->schema([

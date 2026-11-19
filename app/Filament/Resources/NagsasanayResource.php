@@ -20,6 +20,7 @@ class NagsasanayResource extends Resource
     protected static ?string $modelLabel = 'Nagsasanay';
     protected static ?string $pluralModelLabel = 'Nagsasanay';
     protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Nagsasanay';
 
     public static function form(Form $form): Form
     {

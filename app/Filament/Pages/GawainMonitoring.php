@@ -17,6 +17,7 @@ class GawainMonitoring extends Page
     protected static ?string $navigationLabel = 'Gawain Monitoring';
     protected static ?string $title = 'Gawain Monitoring';
     protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Gawain';
     protected static string $view = 'filament.pages.gawain-monitoring';
 
     protected static string $layout = 'filament-panels::components.layout.index';

@@ -19,6 +19,7 @@ class MangAawitResource extends Resource
     protected static ?string $modelLabel = 'Mang-aawit';
     protected static ?string $pluralModelLabel = 'Mang-aawit';
     protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Mang-aawit';
 
     public static function form(Form $form): Form
 {

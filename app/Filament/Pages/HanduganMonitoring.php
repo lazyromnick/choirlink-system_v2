@@ -12,6 +12,8 @@ class HanduganMonitoring extends Page
     protected static ?string $navigationLabel = 'Handugan Monitoring';
     protected static ?string $title = 'Handugan Monitoring';
     protected static ?int $navigationSort = 5;
+
+    protected static ?string $navigationGroup = 'Handugan';
     protected static string $view = 'filament.pages.handugan-monitoring';
 
     protected static string $layout = 'filament-panels::components.layout.index';

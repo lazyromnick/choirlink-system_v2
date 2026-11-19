@@ -122,4 +122,17 @@ class Nagsasanay extends Model
             $mangAawit->delete();
         });
     }
+
+    public function getAccountHistoryAttribute()
+    {
+        if ($this->training_track === 'Organista') {
+            return $this->mangAawit?->account?->histories ?? collect();
+        }
+
+        $mangAawit = \App\Models\MangAawit::withTrashed()
+            ->where('mang_aawit_id', $this->mang_aawit_id)
+            ->first();
+
+        return $mangAawit?->account?->histories ?? collect();
+    }
 }

@@ -437,11 +437,11 @@ class MangAawitResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'    => Pages\ListMangAawits::route('/'),
-            'create'   => Pages\CreateMangAawit::route('/create'),
-            'archived' => Pages\ListArchivedMangAawits::route('/archived'),
-            'view'     => Pages\ViewMangAawit::route('/{record}'),
-            'edit'     => Pages\EditMangAawit::route('/{record}/edit'),
+            'index'         => Pages\ListMangAawits::route('/'),
+            'create'        => Pages\CreateMangAawit::route('/create'),
+            'archived'      => Pages\ListArchivedMangAawits::route('/archived'),
+            'view'          => Pages\ViewMangAawit::route('/{record}'),
+            'edit'          => Pages\EditMangAawit::route('/{record}/edit'),
         ];
     }
 }
